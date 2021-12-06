@@ -18,6 +18,7 @@ Python script interacts with glassdoor's graphql backend to return results.
 
 With `pipenv`
 ```
+pipenv install
 pipenv shell
 python main.py
 ```
