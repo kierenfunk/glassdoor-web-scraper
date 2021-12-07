@@ -17,7 +17,7 @@ Python script interacts with glassdoor's graphql backend to return results.
 ### Installation
 
 With `pipenv`
-```
+```bash
 pipenv install
 pipenv shell
 python main.py
@@ -28,13 +28,11 @@ python main.py
 ## Testing
 
 For linting:
-```
-autopep8 src/*.py --in-place
-pylint src/*.py
-flake8 
+```bash
+bash scripts/lint.sh
 ```
 
 To run all tests
-```
+```bash
 pytest
 ```
