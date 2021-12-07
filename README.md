@@ -7,7 +7,7 @@ Works without sign-in, user provides a job role and a location and the script re
 Location can be either a city or a country, the most likely match will be taken from glassdoor's matching url.
 Python script interacts with glassdoor's graphql backend to return results.
 
-## Usage
+## Get Started
 
 ### Requirements
 
@@ -22,3 +22,5 @@ pipenv install
 pipenv shell
 python main.py
 ```
+
+## Usage

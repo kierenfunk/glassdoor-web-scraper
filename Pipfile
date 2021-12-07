@@ -7,6 +7,9 @@ name = "pypi"
 requests = "*"
 
 [dev-packages]
+flake8 = "*"
+autopep8 = "*"
+pylint = "*"
 
 [requires]
 python_version = "3"
