@@ -27,6 +27,14 @@ class Request():
             'Connection': 'keep-alive'
         }
         self.session = requests.Session()
+        self.set_csrf()
+
+    def set_csrf(self):
+        response = self.session.get('https://www.glassdoor.com/Job/jobs.htm',
+                                    headers=self.headers)
+        token = list(re.findall(
+            r'\"gdToken\"\:\"([A-Za-z\-\_0-9\:]*)\"', response.text))[0]
+        self.headers['gd-csrf-token'] = token
 
     def get(self, url, headers=None, data=None):
         """Get request with session
@@ -80,7 +88,6 @@ def main(query, location):
     loc_id, loc_type = session.get_location(location)
 
     # get a csrf token
-
     response = session.get(
         ('https://www.glassdoor.com/Job/jobs.htm?'
          f'locT={loc_type}&locId={loc_id}'

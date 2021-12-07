@@ -26,3 +26,9 @@ def test_get_location():
         session.get_location('Taosfijpasodifjaspodfjapoiej')
     with pytest.raises(SystemExit):
         session.get_location('')
+
+
+def test_csrf_token():
+    session = Request()
+    assert 'gd-csrf-token' in session.headers
+    assert len(session.headers['gd-csrf-token']) > 0
