@@ -96,29 +96,6 @@ class Request():
                 query, loc_id, loc_type)
         ).json()
 
-    def get(self, url, headers=None, data=None):
-        """Get request with session
-
-        """
-        temp_headers = self.headers
-        if headers:
-            for key in headers:
-                temp_headers[key] = headers[key]
-        return self.session.get(url, headers=temp_headers, data=data)
-
-    def post(self, url, headers=None, data=None, json_arg=None):
-        """Post request with session
-
-        """
-        temp_headers = self.headers
-        if headers:
-            for key in headers:
-                temp_headers[key] = headers[key]
-        return self.session.post(url,
-                                 headers=temp_headers,
-                                 data=data,
-                                 json=json_arg)
-
     def get_location(self, location):
         """Get location from a location string using glassdoor function
 
