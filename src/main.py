@@ -52,6 +52,23 @@ def get_job_search_query(query, loc_id, loc_type, count=100, page=1):
     }
 
 
+def get_job_details_query(listing_id):
+    """Get graphql query for JobDetail
+
+    """
+    return {
+        "operationName": "JobDetailQuery",
+        "variables": {
+            "enableReviewSummary": True,
+            "jl": listing_id,
+            "queryString": ("pos=101&ao=1110586&s=58&guid"
+                            "=0000017d8c5c314f85c1c7c517f013ef&t=SR&vt=w&"
+                            f"cs=1_1b86b2bd&jobListingId={listing_id}")
+        },
+        "query": queries.JOB_DETAIL_QUERY
+    }
+
+
 class Request():
     """Request class for handling session requests
 
@@ -96,6 +113,17 @@ class Request():
                 query, loc_id, loc_type)
         ).json()
 
+    def get_job_details(self, listing_id):
+        """Get job details based on a listing id
+
+        """
+        return self.session.post(
+            "https://www.glassdoor.com/graph",
+            headers={**self.headers,
+                     'content-type': 'application/json'},
+            json=get_job_details_query(listing_id)
+        ).json()
+
     def get_location(self, location):
         """Get location from a location string using glassdoor function
 
@@ -113,41 +141,3 @@ class Request():
         except IndexError:
             print(f"Exception: Unable to find location data for '{location}'")
             sys.exit(0)
-
-
-def main(query, location):
-    """main function
-
-    """
-    # initialise
-    session = Request()
-    response = session.get_job_listings(query, location)
-    print(response)
-    '''
-    print(total_jobs_count)
-    job = job_listings[0]['jobview']['job']
-    print()
-    print()
-    query = {
-        "operationName": "JobDetailQuery",
-        "variables": {
-            "enableReviewSummary": True,
-            "jl": job['listingId'],
-            "queryString": ("pos=101&ao=1110586&s=58&guid"
-                            "=0000017d8c5c314f85c1c7c517f013ef&t=SR&vt=w&"
-                            f"cs=1_1b86b2bd&jobListingId={job['listingId']}")
-        },
-        "query": queries.JOB_DETAIL_QUERY
-    }
-
-    result = session.post("https://www.glassdoor.com/graph",
-                          headers={
-                              'gd-csrf-token': token,
-                              'content-type': 'application/json'},
-                          json_arg=query).json()
-    print(json.dumps(result['data']['jobView'], sort_keys=True, indent=2))
-    '''
-
-
-if __name__ == "__main__":
-    main('Junior Developer', 'Berlin')

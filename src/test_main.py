@@ -45,3 +45,15 @@ def test_get_job_listings():
     response = session.get_job_listings('Junior Web Developer', 'Berlin')
     assert response['data']['jobListings']['totalJobsCount'] > 0
     assert len(response['data']['jobListings']['jobListings']) == 100
+
+
+def test_get_job_details():
+    """Testing job details getter
+
+    """
+    session = Request()
+    response = session.get_job_listings('Junior Web Developer', 'Berlin')
+    job = response['data']['jobListings']['jobListings'][0]
+    listing_id = job['jobview']['job']['listingId']
+    job_response = session.get_job_details(listing_id)
+    assert job_response is not None
