@@ -76,16 +76,8 @@ def main(query, location):
     """
     # initialise
     session = Request()
-
     # get location data
     loc_id, loc_type = session.get_location(location)
-    # assert loc_id == 96
-    # assert loc_type == 'N'
-
-    # loc_id, loc_type = get_location('Taosfijpasodifjaspodfjapoiej')
-    # print(loc_id, loc_type)
-    # assert loc_id == 96
-    # assert loc_type == 'N'
 
     # get a csrf token
 

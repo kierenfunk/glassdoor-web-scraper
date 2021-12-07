@@ -24,3 +24,17 @@ python main.py
 ```
 
 ## Usage
+
+## Testing
+
+For linting:
+```
+autopep8 *.py --in-place
+pylint *.py
+flake8 *.py
+```
+
+To run all tests
+```
+PYTHONPATH=. pytest
+```
