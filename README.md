@@ -29,12 +29,12 @@ python main.py
 
 For linting:
 ```
-autopep8 *.py --in-place
-pylint *.py
-flake8 *.py
+autopep8 src/*.py --in-place
+pylint src/*.py
+flake8 
 ```
 
 To run all tests
 ```
-PYTHONPATH=. pytest
+pytest
 ```
