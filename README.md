@@ -20,7 +20,7 @@ With `pipenv`
 ```bash
 pipenv install
 pipenv shell
-python main.py
+python src/main.py
 ```
 
 ## Usage
@@ -34,5 +34,5 @@ bash scripts/lint.sh
 
 To run all tests
 ```bash
-pytest
+pytest --cov
 ```
