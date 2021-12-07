@@ -9,6 +9,49 @@ import requests
 import queries
 
 
+def get_job_search_query(query, loc_id, loc_type, count=100, page=1):
+    """Get graphql query for JobSearch
+
+    """
+    location_types = {
+        'N': 'COUNTRY',
+        'C': 'CITY'
+    }
+    return {
+        "operationName": "JobSearchQuery",
+        "variables": {
+            "searchParams": {
+                "keyword": query,
+                "locationId": loc_id,
+                "locationType": location_types[loc_type],
+                "numPerPage": count,
+                "searchType": "SR",
+                "pageNumber": page,
+                "filterParams": [
+                    {
+                        "filterKey": "sortBy",
+                        "values": "date_desc"
+                    },
+                    {
+                        "filterKey": "sc.keyword",
+                        "values": query
+                    },
+                    {
+                        "filterKey": "locT",
+                        "values": loc_type
+                    },
+                    {
+                        "filterKey": "locId",
+                        "values": str(loc_id)
+                    }
+                ],
+                "seoUrl": False
+            }
+        },
+        "query": queries.JOB_SEARCH_QUERY
+    }
+
+
 class Request():
     """Request class for handling session requests
 
@@ -30,11 +73,28 @@ class Request():
         self.set_csrf()
 
     def set_csrf(self):
+        """Set the csrf header on initialisation
+
+        """
         response = self.session.get('https://www.glassdoor.com/Job/jobs.htm',
                                     headers=self.headers)
+        # get csrf token
         token = list(re.findall(
             r'\"gdToken\"\:\"([A-Za-z\-\_0-9\:]*)\"', response.text))[0]
         self.headers['gd-csrf-token'] = token
+
+    def get_job_listings(self, query, location):
+        """Get a list of job listings
+
+        """
+        loc_id, loc_type = self.get_location(location)
+        return self.session.post(
+            "https://www.glassdoor.com/graph",
+            headers={**self.headers,
+                     'content-type': 'application/json'},
+            json=get_job_search_query(
+                query, loc_id, loc_type)
+        ).json()
 
     def get(self, url, headers=None, data=None):
         """Get request with session
@@ -84,69 +144,9 @@ def main(query, location):
     """
     # initialise
     session = Request()
-    # get location data
-    loc_id, loc_type = session.get_location(location)
-
-    # get a csrf token
-    response = session.get(
-        ('https://www.glassdoor.com/Job/jobs.htm?'
-         f'locT={loc_type}&locId={loc_id}'
-         '&jobType=&context=Jobs&sc.keyword=software+engineer'))
-    token = list(re.findall(
-        r'\"gdToken\"\:\"([A-Za-z\-\_0-9\:]*)\"', response.text))[0]
-    # print(token)
-
-    # search for jobs
-    location_type = {
-        'N': 'COUNTRY',
-        'C': 'CITY'
-    }
-    query = {
-        "operationName": "JobSearchQuery",
-        "variables": {
-            "searchParams": {
-                "keyword": query,
-                "locationId": loc_id,
-                "locationType": location_type[loc_type],
-                "numPerPage": 100,
-                "searchType": "SR",
-                "pageNumber": 1,
-                "filterParams": [
-                    {
-                        "filterKey": "sortBy",
-                        "values": "date_desc"
-                    },
-                    {
-                        "filterKey": "sc.keyword",
-                        "values": query
-                    },
-                    {
-                        "filterKey": "locT",
-                        "values": loc_type
-                    },
-                    {
-                        "filterKey": "locId",
-                        "values": str(loc_id)
-                    }
-                ],
-                "seoUrl": False
-            }
-        },
-        "query": queries.JOB_SEARCH_QUERY
-    }
-
-    job_results = session.post("https://www.glassdoor.com/graph",
-                               headers={
-                                   'gd-csrf-token': token,
-                                   'content-type': 'application/json'},
-                               json_arg=query).json()
-    total_jobs_count = job_results['data']['jobListings']['totalJobsCount']
-    job_listings = job_results['data']['jobListings']['jobListings']
-    for job in job_listings:
-        job = job['jobview']
-        print(job['overview']['name'], job['job']
-              ['listingId'], job['header']['locationName'])
-
+    response = session.get_job_listings(query, location)
+    print(response)
+    '''
     print(total_jobs_count)
     job = job_listings[0]['jobview']['job']
     print()
@@ -169,8 +169,8 @@ def main(query, location):
                               'content-type': 'application/json'},
                           json_arg=query).json()
     print(json.dumps(result['data']['jobView'], sort_keys=True, indent=2))
+    '''
 
 
 if __name__ == "__main__":
-    pass
-    # main('Junior Developer', 'Berlin')
+    main('Junior Developer', 'Berlin')

@@ -29,6 +29,19 @@ def test_get_location():
 
 
 def test_csrf_token():
+    """Testing csrf token initialisation
+
+    """
     session = Request()
     assert 'gd-csrf-token' in session.headers
     assert len(session.headers['gd-csrf-token']) > 0
+
+
+def test_get_job_listings():
+    """Testing job listing getter
+
+    """
+    session = Request()
+    response = session.get_job_listings('Junior Web Developer', 'Berlin')
+    assert response['data']['jobListings']['totalJobsCount'] > 0
+    assert len(response['data']['jobListings']['jobListings']) == 100
